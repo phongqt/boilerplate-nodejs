@@ -7,12 +7,21 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var mongoose = require('mongoose');
 var path 	 		= require('path');
+var mysql = require('mysql')
 
 var configDB = require('./server/db');
 var app = express();
 var port = process.env.PORT || 8081;
 
-mongoose.connect(configDB.mongodburl);
+// using mongo db
+mongoose.connect(configDB.mongodb_url);
+
+//using mysql
+var connection = mysql.createConnection(configDB.mysql_config);
+connection.connect(function(err) {
+  if (err) throw err
+  console.log('You are now connected to my sql') 
+})
 
 require('./server/auth/passport')(passport);
 app.set('views', path.join(__dirname, 'server/views'));
