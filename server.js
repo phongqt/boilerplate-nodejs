@@ -7,20 +7,19 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var mongoose = require('mongoose');
 var path 	 		= require('path');
-var mysql = require('mysql')
 
-var configDB = require('./server/db');
+var mysqlHelper = require('./server/db/mysql-helper');
+
+var configDB = require('./server/db/config');
 var app = express();
 var port = process.env.PORT || 8081;
 
 // using mongo db
 mongoose.connect(configDB.mongodb_url);
 
-//using mysql
-var connection = mysql.createConnection(configDB.mysql_config);
-connection.connect(function(err) {
-  if (err) throw err
-  console.log('You are now connected to my sql') 
+// using mysql
+mysqlHelper.query('select * from user', null, function (res) {
+  console.log(res);
 })
 
 require('./server/auth/passport')(passport);
