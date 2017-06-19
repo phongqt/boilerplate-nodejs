@@ -16,9 +16,9 @@ var port = process.env.PORT || 8081;
 
 // using mongo db
 // mongoose.connect(configDB.mongodb_url);
-app.use('/static', express.static('public'))
+
 require('./server/auth/passport')(passport);
-app.set('views', path.join(__dirname, 'server/views'));
+
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -26,7 +26,10 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
+app.set('views', path.join(__dirname, 'server/views'));
 app.set('view engine', 'ejs');
+console.log(__dirname + '/public')
+app.use(express.static(__dirname + '/public'));
 
 app.use(session({
   secret: 'helloworld', // session secret
@@ -40,7 +43,7 @@ app.use(flash());
 
 require('./server/auth-routes')(app, passport);
 
-app.use('/admin', require('./server/admin')(express));
+app.use('/', require('./server/admin')(express));
 app.use('/api', require('./server/api')(express));
 
 app.listen(port, function () {
