@@ -6,7 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var mongoose = require('mongoose');
-var path 	 		= require('path');
+var path = require('path');
 
 var mysqlHelper = require('./server/db/mysql-helper');
 
@@ -15,13 +15,8 @@ var app = express();
 var port = process.env.PORT || 8081;
 
 // using mongo db
-mongoose.connect(configDB.mongodb_url);
-
-// using mysql
-mysqlHelper.query('select * from user', null, function (res) {
-  console.log(res);
-})
-
+// mongoose.connect(configDB.mongodb_url);
+app.use('/static', express.static('public'))
 require('./server/auth/passport')(passport);
 app.set('views', path.join(__dirname, 'server/views'));
 app.use(morgan('dev'));
@@ -44,6 +39,9 @@ app.use(passport.session());
 app.use(flash());
 
 require('./server/auth-routes')(app, passport);
+
+app.use('/admin', require('./server/admin')(express));
+app.use('/api', require('./server/api')(express));
 
 app.listen(port, function () {
   console.log('Server started!');
